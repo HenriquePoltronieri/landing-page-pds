@@ -1,178 +1,783 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Mentorly</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentorly — Ensine com clareza.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0f11;
+      --surface: #16181c;
+      --border: rgba(255,255,255,0.07);
+      --teal: #3ecfb2;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --text: #f0f0f0;
+      --muted: #8a8f9a;
+      --accent-teal: #3ecfb2;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px 50px;
-      align-items: center;
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(14,15,17,0.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
     }
 
-    header h1 {
-      color: #38bdf8;
-    }
-
-    nav a {
-      margin-left: 20px;
+    .logo {
+      display: flex; align-items: center; gap: .7rem;
       text-decoration: none;
-      color: white;
     }
 
+    .logo-icon {
+      width: 36px; height: 36px;
+      position: relative; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 3px;
+    }
+
+    .logo-icon span {
+      border-radius: 4px;
+      display: block;
+    }
+    .logo-icon .a { background: var(--teal); grid-column: 1; grid-row: 1 / span 2; border-radius: 6px 4px 4px 6px; }
+    .logo-icon .b { background: var(--blue); border-radius: 4px 6px 4px 4px; }
+    .logo-icon .c { background: var(--green); border-radius: 4px 4px 6px 4px; opacity: .7; }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: .9rem; font-weight: 400;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      display: flex; gap: .8rem;
+    }
+
+    .btn-ghost {
+      padding: .55rem 1.3rem; border-radius: 8px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: .875rem; cursor: pointer; transition: border-color .2s, background .2s;
+      text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+
+    .btn-primary {
+      padding: .55rem 1.4rem; border-radius: 8px;
+      background: var(--teal); border: none;
+      color: #0e0f11; font-family: 'DM Sans', sans-serif;
+      font-size: .875rem; font-weight: 600; cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ── HERO ── */
     .hero {
-      text-align: center;
-      padding: 100px 20px;
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 7rem 3rem 4rem;
+      position: relative; overflow: hidden;
     }
 
-    .hero h2 {
-      font-size: 40px;
-      margin-bottom: 20px;
+    /* geometric bg */
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      pointer-events: none;
     }
 
-    .hero p {
-      font-size: 18px;
-      color: #94a3b8;
-      margin-bottom: 30px;
+    .hex-grid {
+      position: absolute;
+      top: -10%; left: -5%;
+      width: 55%; aspect-ratio: 1;
+      opacity: .35;
     }
 
-    .btn {
-      padding: 12px 25px;
-      background: #38bdf8;
-      color: black;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+    .hex-grid svg { width: 100%; height: 100%; }
+
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .orb-teal {
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(62,207,178,.18), transparent 70%);
+      top: 15%; left: 10%;
+    }
+    .orb-blue {
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(59,130,246,.12), transparent 70%);
+      top: 50%; left: 30%;
     }
 
-    section {
-      padding: 80px 50px;
-      text-align: center;
+    .grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 60px 60px;
     }
 
-    .cards {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      margin-top: 40px;
+    /* hero left */
+    .hero-left {
+      position: relative; z-index: 1;
+      max-width: 540px;
     }
 
-    .card {
-      background: #1e293b;
-      padding: 25px;
+    .badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .4rem 1rem; border-radius: 20px;
+      background: rgba(62,207,178,.08);
+      border: 1px solid rgba(62,207,178,.2);
+      font-size: .78rem; color: var(--teal);
+      font-weight: 500; margin-bottom: 2rem;
+      animation: fadeUp .6s ease both;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--teal);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.8); }
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -.03em;
+      animation: fadeUp .6s .1s ease both;
+    }
+
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--blue) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      margin-top: 1.4rem;
+      font-size: 1.05rem; color: var(--muted);
+      line-height: 1.65; max-width: 420px;
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      animation: fadeUp .6s .3s ease both;
+    }
+
+    .btn-hero {
+      padding: .85rem 2rem; border-radius: 10px;
+      background: var(--teal); border: none;
+      color: #0e0f11; font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 0 30px rgba(62,207,178,.25);
+      text-decoration: none; display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-hero:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 0 40px rgba(62,207,178,.35); }
+
+    .btn-outline {
+      padding: .85rem 2rem; border-radius: 10px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; cursor: pointer;
+      transition: border-color .2s, background .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+
+    .hero-stats {
+      margin-top: 3rem;
+      display: flex; gap: 3rem;
+      animation: fadeUp .6s .4s ease both;
+    }
+
+    .stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--text);
+    }
+    .stat-val span { color: var(--teal); }
+    .stat-label { font-size: .8rem; color: var(--muted); margin-top: .15rem; }
+
+    /* hero right — floating card */
+    .hero-right {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    .dashboard-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.8rem;
+      width: 380px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.5);
+      animation: floatIn .7s .2s ease both;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(30px) rotateX(8deg); }
+      to   { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: .95rem; font-weight: 600;
+    }
+
+    .card-badge {
+      font-size: .72rem; padding: .2rem .65rem;
+      border-radius: 20px; background: rgba(62,207,178,.12);
+      color: var(--teal); border: 1px solid rgba(62,207,178,.2);
+    }
+
+    .student-list { display: flex; flex-direction: column; gap: .75rem; }
+
+    .student-row {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .75rem 1rem; border-radius: 10px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid transparent;
+      transition: border-color .2s;
+      cursor: default;
+    }
+    .student-row:hover { border-color: var(--border); }
+
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 600; flex-shrink: 0;
+    }
+
+    .student-name { font-size: .85rem; flex: 1; }
+    .student-grade {
+      font-size: .8rem; font-weight: 600;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .grade-bar-wrap {
+      width: 60px; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,.07); overflow: hidden;
+    }
+    .grade-bar {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+      transition: width .6s ease;
+    }
+
+    .mini-chart {
+      margin-top: 1.4rem;
+      padding: 1rem; border-radius: 10px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .mini-chart-label {
+      font-size: .72rem; color: var(--muted); margin-bottom: .8rem;
+    }
+
+    .bars {
+      display: flex; align-items: flex-end; gap: .4rem; height: 50px;
+    }
+
+    .bar {
+      flex: 1; border-radius: 3px 3px 0 0;
+      background: rgba(62,207,178,.15);
+      transition: background .2s;
+      position: relative;
+    }
+    .bar.active { background: rgba(62,207,178,.5); }
+    .bar:hover { background: rgba(62,207,178,.4); }
+
+    /* floating chips */
+    .chip {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      width: 280px;
+      padding: .6rem .9rem;
+      display: flex; align-items: center; gap: .55rem;
+      font-size: .78rem; color: var(--text);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+      white-space: nowrap;
+      animation: chipFloat 3s ease-in-out infinite;
     }
 
-    .card h3 {
-      color: #38bdf8;
+    .chip-icon { font-size: 1rem; }
+
+    .chip-1 { top: 8%; right: -5%; animation-delay: 0s; }
+    .chip-2 { bottom: 20%; left: -8%; animation-delay: 1.2s; }
+
+    @keyframes chipFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
     }
 
-    footer {
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 6rem 3rem;
+      position: relative;
+    }
+
+    .section-label {
       text-align: center;
-      padding: 30px;
-      background: #020617;
-      color: #94a3b8;
+      font-size: .78rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--teal);
+      font-weight: 500; margin-bottom: 1rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 800; letter-spacing: -.025em;
+      max-width: 580px; margin: 0 auto 1rem;
+    }
+
+    .section-sub {
+      text-align: center; color: var(--muted);
+      max-width: 460px; margin: 0 auto 4rem;
+      font-size: .95rem; line-height: 1.6;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .feat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      position: relative; overflow: hidden;
+    }
+    .feat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      opacity: 0; transition: opacity .3s;
+    }
+    .feat-card:hover { border-color: rgba(62,207,178,.2); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+    .feat-card:hover::before { opacity: 1; }
+
+    .feat-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1.2rem;
+    }
+
+    .feat-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      margin-bottom: .6rem;
+    }
+
+    .feat-desc { font-size: .875rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      padding: 6rem 3rem;
+      background: rgba(255,255,255,.015);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .steps {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem; max-width: 900px; margin: 0 auto;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute; top: 22px; left: 16.5%; right: 16.5%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+    }
+
+    .step { text-align: center; }
+
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: .85rem; font-weight: 700;
+      color: var(--teal); margin: 0 auto 1.2rem;
+      position: relative; z-index: 1;
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      margin-bottom: .6rem;
+    }
+
+    .step-desc { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 7rem 3rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+
+    .cta-glow {
+      position: absolute;
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(62,207,178,.08), transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 800; letter-spacing: -.03em;
+      max-width: 600px; margin: 0 auto 1.2rem;
+      position: relative; z-index: 1;
+    }
+
+    .cta-sub {
+      color: var(--muted); max-width: 420px;
+      margin: 0 auto 2.5rem; font-size: .95rem; line-height: 1.6;
+      position: relative; z-index: 1;
+    }
+
+    .cta-buttons {
+      display: flex; justify-content: center; gap: 1rem;
+      position: relative; z-index: 1;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .footer-copy { font-size: .8rem; color: var(--muted); }
+
+    .footer-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .footer-links a {
+      font-size: .8rem; color: var(--muted);
+      text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; gap: 3rem; }
+      .hero-right { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .steps::before { display: none; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
     }
   </style>
 </head>
-
 <body>
 
-<header>
-  <h1>Mentorly</h1>
+  <!-- NAV -->
   <nav>
-    <a href="#sobre">Sobre</a>
-    <a href="#como">Como Funciona</a>
-    <a href="#impacto">Impacto</a>
+    <a href="#" class="logo">
+      <div class="logo-icon">
+        <span class="a"></span>
+        <span class="b"></span>
+        <span class="c"></span>
+      </div>
+      <span class="logo-text">Mentorly</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#features">Funcionalidades</a></li>
+      <li><a href="#how">Como funciona</a></li>
+      <li><a href="#">Preços</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="#" class="btn-ghost">Entrar</a>
+      <a href="#" class="btn-primary">Criar conta grátis</a>
+    </div>
   </nav>
-</header>
 
-<section class="hero">
-  <h2>Antecipar é cuidar.</h2>
-  <p>Uma plataforma inteligente que ajuda escolas a identificar problemas antes que eles aconteçam.</p>
-  <button class="btn">Conhecer</button>
-</section>
-
-<section id="sobre">
-  <h2>O Problema</h2>
-  <p>Professores e coordenação não conseguem acompanhar todos os sinais de risco no dia a dia escolar.</p>
-
-  <div class="cards">
-    <div class="card">
-      <h3>⚠️ Falta de Visibilidade</h3>
-      <p>Sinais importantes passam despercebidos.</p>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="grid-lines"></div>
+      <div class="glow-orb orb-teal"></div>
+      <div class="glow-orb orb-blue"></div>
+      <div class="hex-grid">
+        <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="250,50 430,150 430,350 250,450 70,350 70,150"
+            stroke="rgba(62,207,178,0.25)" stroke-width="1" fill="none"/>
+          <polygon points="250,110 380,180 380,320 250,390 120,320 120,180"
+            stroke="rgba(62,207,178,0.15)" stroke-width="1" fill="none"/>
+          <polygon points="250,170 330,215 330,295 250,340 170,295 170,215"
+            stroke="rgba(62,207,178,0.1)" stroke-width="1" fill="none"/>
+          <circle cx="250" cy="50" r="4" fill="rgba(62,207,178,0.5)"/>
+          <circle cx="430" cy="150" r="3" fill="rgba(62,207,178,0.3)"/>
+          <circle cx="430" cy="350" r="3" fill="rgba(62,207,178,0.3)"/>
+          <circle cx="250" cy="450" r="4" fill="rgba(62,207,178,0.4)"/>
+          <circle cx="70" cy="350" r="3" fill="rgba(62,207,178,0.3)"/>
+          <circle cx="70" cy="150" r="3" fill="rgba(62,207,178,0.3)"/>
+          <line x1="250" y1="50" x2="430" y2="150" stroke="rgba(62,207,178,0.1)" stroke-width="1"/>
+          <line x1="430" y1="150" x2="430" y2="350" stroke="rgba(62,207,178,0.1)" stroke-width="1"/>
+        </svg>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>⏳ Reação Tardia</h3>
-      <p>Problemas só são tratados depois que acontecem.</p>
+    <div class="hero-left">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Plataforma de gestão educacional
+      </div>
+
+      <h1 class="hero-title">
+        Ensine com<br/>
+        <span class="accent">clareza.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Gerencie turmas, notas e alunos em um só lugar.
+        Foco total no que realmente importa — a aprendizagem.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#" class="btn-hero">
+          Começar gratuitamente
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#how" class="btn-outline">
+          Ver como funciona
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div>
+          <div class="stat-val">10k<span>+</span></div>
+          <div class="stat-label">Alunos gerenciados</div>
+        </div>
+        <div>
+          <div class="stat-val">500<span>+</span></div>
+          <div class="stat-label">Professores ativos</div>
+        </div>
+        <div>
+          <div class="stat-val">98<span>%</span></div>
+          <div class="stat-label">Satisfação</div>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>📉 Sobrecarga</h3>
-      <p>Professores não conseguem monitorar tudo.</p>
+    <div class="hero-right">
+      <!-- floating chips -->
+      <div class="chip chip-1">
+        <span class="chip-icon">✅</span>
+        Nota lançada com sucesso
+      </div>
+      <div class="chip chip-2">
+        <span class="chip-icon">📊</span>
+        Turma 3A — Média 8.4
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-header">
+          <span class="card-title">Turma 2B — Matemática</span>
+          <span class="card-badge">Ativa</span>
+        </div>
+
+        <div class="student-list">
+          <div class="student-row">
+            <div class="avatar" style="background:rgba(62,207,178,.15);color:var(--teal)">AM</div>
+            <span class="student-name">Ana Martins</span>
+            <div class="grade-bar-wrap"><div class="grade-bar" style="width:92%"></div></div>
+            <span class="student-grade" style="color:var(--teal)">9.2</span>
+          </div>
+          <div class="student-row">
+            <div class="avatar" style="background:rgba(59,130,246,.15);color:#60a5fa">CS</div>
+            <span class="student-name">Carlos Silva</span>
+            <div class="grade-bar-wrap"><div class="grade-bar" style="width:78%"></div></div>
+            <span class="student-grade" style="color:#60a5fa">7.8</span>
+          </div>
+          <div class="student-row">
+            <div class="avatar" style="background:rgba(34,197,94,.15);color:#4ade80">JF</div>
+            <span class="student-name">Julia Fonseca</span>
+            <div class="grade-bar-wrap"><div class="grade-bar" style="width:85%"></div></div>
+            <span class="student-grade" style="color:#4ade80">8.5</span>
+          </div>
+          <div class="student-row">
+            <div class="avatar" style="background:rgba(251,191,36,.15);color:#fbbf24">RP</div>
+            <span class="student-name">Rafael Pinto</span>
+            <div class="grade-bar-wrap"><div class="grade-bar" style="width:65%"></div></div>
+            <span class="student-grade" style="color:#fbbf24">6.5</span>
+          </div>
+        </div>
+
+        <div class="mini-chart">
+          <div class="mini-chart-label">Desempenho nas últimas 6 semanas</div>
+          <div class="bars">
+            <div class="bar" style="height:45%"></div>
+            <div class="bar" style="height:60%"></div>
+            <div class="bar" style="height:55%"></div>
+            <div class="bar" style="height:72%"></div>
+            <div class="bar active" style="height:80%"></div>
+            <div class="bar" style="height:88%"></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="como">
-  <h2>Como Funciona</h2>
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <p class="section-label">Funcionalidades</p>
+    <h2 class="section-title">Tudo que você precisa para ensinar melhor</h2>
+    <p class="section-sub">Do lançamento de notas ao acompanhamento individual, o Mentorly centraliza tudo na mesma plataforma.</p>
 
-  <div class="cards">
-    <div class="card">
-      <h3>📋 Registro</h3>
-      <p>Professores registram observações simples.</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(62,207,178,.1)">📋</div>
+        <h3 class="feat-title">Gestão de Turmas</h3>
+        <p class="feat-desc">Crie e organize turmas com facilidade. Adicione alunos, defina disciplinas e mantenha tudo estruturado em um único painel.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(59,130,246,.1)">📊</div>
+        <h3 class="feat-title">Lançamento de Notas</h3>
+        <p class="feat-desc">Registre notas por atividade, bimestre ou critério personalizado. Cálculos automáticos e histórico completo sempre à mão.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(34,197,94,.1)">👤</div>
+        <h3 class="feat-title">Perfil do Aluno</h3>
+        <p class="feat-desc">Visualize o histórico completo de cada aluno: frequência, notas, evolução e observações em uma única tela.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(251,191,36,.1)">📅</div>
+        <h3 class="feat-title">Controle de Frequência</h3>
+        <p class="feat-desc">Marque presença rapidamente com listas digitais. Relatórios automáticos de faltas por aluno e por turma.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(168,85,247,.1)">📈</div>
+        <h3 class="feat-title">Relatórios Inteligentes</h3>
+        <p class="feat-desc">Gráficos claros de desempenho por turma, disciplina ou período. Identifique padrões e tome decisões com confiança.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:rgba(239,68,68,.1)">🔔</div>
+        <h3 class="feat-title">Comunicados e Avisos</h3>
+        <p class="feat-desc">Envie comunicados para alunos ou responsáveis direto pela plataforma. Simples, rápido e rastreável.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="card">
-      <h3>🤖 IA Analisa</h3>
-      <p>O sistema identifica padrões de comportamento.</p>
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <p class="section-label">Como funciona</p>
+    <h2 class="section-title">Comece em minutos</h2>
+    <p class="section-sub">Sem configurações complicadas. Três passos e você já está gerenciando sua escola.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 class="step-title">Crie sua conta</h3>
+        <p class="step-desc">Cadastro gratuito em menos de 2 minutos. Sem cartão de crédito, sem burocracia.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 class="step-title">Monte suas turmas</h3>
+        <p class="step-desc">Adicione alunos, disciplinas e configure as regras de avaliação do seu jeito.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 class="step-title">Acompanhe tudo</h3>
+        <p class="step-desc">Lance notas, marque presença e acompanhe o desempenho em tempo real pelo painel.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="card">
-      <h3>🚨 Alertas</h3>
-      <p>A coordenação recebe avisos antecipados.</p>
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-glow"></div>
+    <h2 class="cta-title">Pronto para ensinar com mais clareza?</h2>
+    <p class="cta-sub">Junte-se a centenas de professores que já transformaram sua gestão com o Mentorly.</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn-hero">Criar conta grátis</a>
+      <a href="#" class="btn-outline">Falar com a equipe</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="impacto">
-  <h2>Impacto</h2>
-
-  <div class="cards">
-    <div class="card">
-      <h3>🏫 Ambiente Seguro</h3>
-      <p>Menos conflitos dentro da escola.</p>
-    </div>
-
-    <div class="card">
-      <h3>📈 Melhor Desempenho</h3>
-      <p>Alunos recebem ajuda no momento certo.</p>
-    </div>
-
-    <div class="card">
-      <h3>❤️ Cuidado Real</h3>
-      <p>Prevenção ao invés de reação.</p>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p>Mentorly © 2026 | Projeto Escolar</p>
-</footer>
+  <!-- FOOTER -->
+  <footer>
+    <a href="#" class="logo" style="text-decoration:none">
+      <div class="logo-icon" style="width:28px;height:28px">
+        <span class="a"></span>
+        <span class="b"></span>
+        <span class="c"></span>
+      </div>
+      <span class="logo-text" style="font-size:1.1rem">Mentorly</span>
+    </a>
+    <p class="footer-copy">© 2025 Mentorly. Todos os direitos reservados.</p>
+    <ul class="footer-links">
+      <li><a href="#">Privacidade</a></li>
+      <li><a href="#">Termos</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+  </footer>
 
 </body>
 </html>
